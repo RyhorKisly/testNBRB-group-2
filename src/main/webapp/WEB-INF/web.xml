@@ -6,4 +6,9 @@
 
     <display-name>testNBRB-group-2</display-name>
 
+    <context-param>
+        <param-name>appUrl</param-name>
+        <param-value>http://localhost:8081/testNBRB-group-2</param-value>
+    </context-param>
+
 </web-app>
