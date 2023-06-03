@@ -13,7 +13,7 @@ public class ServiceCurrencySingleton {
         if(instance==null){
             synchronized (ServiceCurrencySingleton.class){
                 if(instance==null){
-                    instance = new ServiceCurrency(DaoCurrencySingleton.getInstance());
+//                    instance = new ServiceCurrency(DaoCurrencySingleton.getInstance());
                 }
             }
         }
