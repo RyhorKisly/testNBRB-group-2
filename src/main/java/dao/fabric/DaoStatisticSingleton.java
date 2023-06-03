@@ -1,8 +1,6 @@
 package dao.fabric;
 
-import dao.DaoStatistic;
 import dao.api.IDaoStatisticCurrency;
-import dao.api.IDaoCurrency;
 import dao.ds.fabric.DataSourceSingleton;
 
 import java.beans.PropertyVetoException;

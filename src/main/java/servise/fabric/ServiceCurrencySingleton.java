@@ -1,11 +1,7 @@
 package servise.fabric;
 
 import dao.fabric.DaoCurrencySingleton;
-import servise.ServiceCurrency;
 import servise.api.IServiceCurrency;
-import servise.api.IServiceStatistic;
-
-import java.beans.PropertyVetoException;
 
 public class ServiceCurrencySingleton {
     private static volatile IServiceCurrency instance;

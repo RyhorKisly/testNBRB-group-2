@@ -1,6 +1,5 @@
 package dao.fabric;
 
-import dao.DaoCurrency;
 import dao.api.IDaoCurrency;
 import dao.ds.fabric.DataSourceSingleton;
 
