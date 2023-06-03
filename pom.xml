@@ -9,6 +9,15 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.tomcat.url>http://localhost:8081/manager/text</maven.tomcat.url>
+        <maven.tomcat.server>TomcatServer8</maven.tomcat.server>
+        <maven.tomcat.path>/${project.build.finalName}</maven.tomcat.path>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -59,9 +68,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 
     <build>
@@ -69,10 +75,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <target>11</target>
-                    <source>11</source>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -90,6 +92,11 @@
                     </webResources>
                     <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
             </plugin>
         </plugins>
     </build>
