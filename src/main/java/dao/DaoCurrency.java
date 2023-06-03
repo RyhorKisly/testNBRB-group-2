@@ -3,7 +3,6 @@ package dao;
 import core.Currency;
 import dao.api.IDaoCurrency;
 import dao.ds.api.IDataSourceWrapper;
-import dao.ds.fabric.DataSourceSingleton;
 
 import java.util.List;
 
