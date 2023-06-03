@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="testNBRB-group-2" />
+        <module name="testNB" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="testNBRB-group-2" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

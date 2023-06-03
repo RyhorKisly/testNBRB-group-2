@@ -1,8 +1,5 @@
 import core.StatisticCurrency;
-import dao.api.IDaoCurrency;
-import dao.fabric.DaoCurrencySingleton;
-import servise.ServiceSend;
-import servise.ServiceStatistic;
+
 import servise.api.IServiceCurrency;
 import servise.api.IServiceSend;
 import servise.api.IServiceStatistic;
