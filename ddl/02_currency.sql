@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS curr.currency
 (
-    id bigint NOT NULL,
-    parent_id bigint NOT NULL,
-    code bigint NOT NULL,
-    abbreviation text NOT NULL,
+    id bigint,
+    parent_id bigint,
+    code bigint,
+    abbreviation text,
     name text NOT NULL,
     name_bel text NOT NULL,
     name_eng text NOT NULL,
