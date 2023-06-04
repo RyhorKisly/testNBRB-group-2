@@ -10,7 +10,11 @@ import java.util.List;
 
 public class DaoCurrency implements IDaoCurrency {
     IDataSourceWrapper iDataSourceWrapper;
-
+    private static final String SAVE_CURRENCIES = "INSERT INTO curr.currency(\n" +
+            "\tid, parent_id, code, abbreviation, name, name_bel, name_eng, quot_name, " +
+            "quot_name_bel, quot_name_eng, name_multi, name_bel_multi, name_eng_multi, " +
+            "scale, periodicity, date_start, date_end) \n" +
+            "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String GET_CURRENCIES = "SELECT id, parent_id, code, abbreviation, name, " +
             "name_bel, name_eng, quot_name, quot_name_bel, quot_name_eng, name_multi, name_bel_multi, " +
             "name_eng_multi, scale, periodicity, date_start, date_end \n" +
@@ -20,11 +24,6 @@ public class DaoCurrency implements IDaoCurrency {
             "name_eng_multi, scale, periodicity, date_start, date_end \n" +
             "FROM curr.currency \n" +
             "WHERE abbreviation = ?;";
-    private static final String SAVE_CURRENCIES = "INSERT INTO curr.currency(\n" +
-            "\tid, parent_id, code, abbreviation, name, name_bel, name_eng, quot_name, " +
-            "quot_name_bel, quot_name_eng, name_multi, name_bel_multi, name_eng_multi, " +
-            "scale, periodicity, date_start, date_end) \n" +
-            "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String DELETE_CURRENCY = "DELETE FROM curr.currency \n" +
             "\tWHERE id = ?;";
     public DaoCurrency(IDataSourceWrapper iDataSourceWrapper) {
