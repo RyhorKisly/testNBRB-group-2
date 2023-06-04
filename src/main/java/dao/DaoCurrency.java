@@ -18,6 +18,7 @@ import java.util.List;
 public class DaoCurrency implements IDaoCurrency {
     IDataSourceWrapper iDataSourceWrapper;
 
+
     private static final String GET_CURRENCIES = "SELECT id, parent_id, code, abbreviation, name, " +
             "name_bel, name_eng, quot_name, quot_name_bel, quot_name_eng, name_multi, name_bel_multi, " +
             "name_eng_multi, scale, periodicity, date_start, date_end \n" +
@@ -28,6 +29,8 @@ public class DaoCurrency implements IDaoCurrency {
             "quot_name_bel, quot_name_eng, name_multi, name_bel_multi, name_eng_multi, " +
             "scale, periodicity, date_start, date_end) \n" +
             "\tVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String DELETE_CURRENCY = "DELETE FROM curr.currency \n" +
+            "\tWHERE id = ?;";
     public DaoCurrency(IDataSourceWrapper iDataSourceWrapper) {
         this.iDataSourceWrapper = iDataSourceWrapper;
     }
@@ -35,7 +38,7 @@ public class DaoCurrency implements IDaoCurrency {
     @Override
     public void saveCurrency(List<Currency> currencies) {
         try (
-                Connection conn = DataSourceSingleton.getInstance().getConnection()
+                Connection conn = iDataSourceWrapper.getConnection()
         ) {
             for (Currency currency : currencies) {
                 PreparedStatement ps = conn.prepareStatement(SAVE_CURRENCIES);
@@ -60,20 +63,13 @@ public class DaoCurrency implements IDaoCurrency {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка подключения к базе данных", e);
-        } catch (PropertyVetoException e) {
-            throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public boolean exist(String typeCurrency) {
-        return false;
     }
 
     @Override
     public List<Currency> getCurrency(String abbreviation) {
         List<Currency> currencies= new ArrayList<>();
-        try (Connection conn = DataSourceSingleton.getInstance().getConnection();
+        try (Connection conn = iDataSourceWrapper.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_CURRENCIES)) {
             ps.setObject(1, abbreviation);
             try(ResultSet rs = ps.executeQuery()) {
@@ -102,14 +98,17 @@ public class DaoCurrency implements IDaoCurrency {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка подключения к базе данных", e);
-        } catch (PropertyVetoException e) {
-            throw new RuntimeException(e);
         }
         return currencies;
     }
 
     @Override
     public void remove(long id) {
-
-    }
+        try (Connection connection = iDataSourceWrapper.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CURRENCY);
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка подключения к базе данных", e);
+        }    }
 }
