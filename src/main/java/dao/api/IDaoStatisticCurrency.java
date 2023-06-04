@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface IDaoStatisticCurrency {
     void saveStatisticCurrency(List<StatisticCurrency> statisticCurrencies);
-    List<StatisticCurrency> getCurrency(long typeCurrency);
-    List<StatisticCurrency> getCurrencyFrom(long typeCurrency, LocalDate dateStart, LocalDate dateEnd);
-    List<StatisticCurrency> getCurrencyFromMonthWithoutWeekend(long typeCurrency, int month);
+    List<StatisticCurrency> getCurrency(long curId);
+    List<StatisticCurrency> getCurrencyFrom(long curId, LocalDate dateStart, LocalDate dateEnd);
+    List<StatisticCurrency> getCurrencyFromMonthWithoutWeekend(long curId, int month);
 
 }
