@@ -53,17 +53,17 @@ public class ServiceCurrency implements IServiceCurrency {
     }
 
     @Override
-    public long getId(String typeCurrency) {
-//        long id = daoCurrency.getID(typeCurrency);
-//        if(id == 0){
-//            throw new IllegalArgumentException("Не верно указана аббревиатура валюты");
-//        }
-        return 0;
-    }
+    public List<Currency> getCurrency(String typeCurrency) {
+        if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
+            return daoCurrency.getCurrency(typeCurrency);
+        }
+        updateCurrency();
+        if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
+            return daoCurrency.getCurrency(typeCurrency);
+        }
+        else {
+            throw new IllegalArgumentException("Такого типа не существует");
+        }
 
-    @Override
-    public boolean exist(String type) {
-//        return daoCurrency.exist(type)
-        return true;
     }
 }
