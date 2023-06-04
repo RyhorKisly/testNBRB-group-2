@@ -1,7 +1,6 @@
 package servise.fabric;
 
-import servise.api.IServiceSend;
-
+import servise.ServiceSend;
 public class ServiceSendSingleton {
     private static volatile IServiceSend instance;
 
@@ -12,7 +11,8 @@ public class ServiceSendSingleton {
         if(instance==null){
             synchronized (ServiceSendSingleton.class){
                 if(instance==null){
-//                    instance = new ServiceSend();
+                    instance = new ServiceSend(ServiceCurrencySingleton.getInstance());
+
                 }
             }
         }
