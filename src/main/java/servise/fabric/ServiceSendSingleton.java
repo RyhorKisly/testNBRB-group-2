@@ -1,6 +1,8 @@
 package servise.fabric;
 
 import servise.ServiceSend;
+import servise.api.IServiceSend;
+
 public class ServiceSendSingleton {
     private static volatile IServiceSend instance;
 
