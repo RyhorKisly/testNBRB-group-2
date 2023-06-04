@@ -82,30 +82,29 @@ public class ServiceSend implements IServiceSend {
         return currencies;
     }
 
-    @Override
-    public Currency getCurrency(String type) {
-        long idCurrency = serviceCurrency.getId(type);
-        if(idCurrency == 0){
-            throw new IllegalArgumentException("Не верно указана аббревиатура валюты");
-        }
-        String urlString = "https://api.nbrb.by/exrates/currencies/"+ idCurrency;
-        Currency currency = null;
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Accept", "application/json");
-            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-                try (BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(connection.getInputStream()))){
-                    String currencyOnID = bufferedReader.readLine();
-                    currency = objectMapper.readValue(currencyOnID, Currency.class);
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return currency;
-    }
+//    @Override
+//    public List<Currency> getCurrency(String type) {
+//        List<Currency> list = serviceCurrency.getCurrency(type);
+//
+//
+//        String urlString = "https://api.nbrb.by/exrates/currencies/"+ idCurrency;
+//        Currency currency = null;
+//        try {
+//            URL url = new URL(urlString);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("Accept", "application/json");
+//            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+//                try (BufferedReader bufferedReader = new BufferedReader(
+//                        new InputStreamReader(connection.getInputStream()))){
+//                    String currencyOnID = bufferedReader.readLine();
+//                    currency = objectMapper.readValue(currencyOnID, Currency.class);
+//                }
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return currency;
+//    }
 }
