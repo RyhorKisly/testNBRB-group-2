@@ -10,9 +10,9 @@ public class delete {
     private IServiceCurrency serviceCurrency;
 
     public void dkjasldj(){
-        List<Currency> sda;
-        serviceCurrency.save(sda);
-        serviceCurrency.getId("USD");
+//        List<Currency> sda;
+//        serviceCurrency.save(sda);
+//        serviceCurrency.getId("USD");
 
     }
 }
