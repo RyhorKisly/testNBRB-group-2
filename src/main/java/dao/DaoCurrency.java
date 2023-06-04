@@ -13,7 +13,7 @@ public class DaoCurrency implements IDaoCurrency {
     }
 
     @Override
-    public long getID(String typeCurrency) {
+    public long getID(String abbreviation) {
         return 0;
     }
 
