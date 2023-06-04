@@ -54,15 +54,16 @@ public class ServiceCurrency implements IServiceCurrency {
 
     @Override
     public long getId(String typeCurrency) {
-        long id = daoCurrency.getID(typeCurrency);
-        if(id == 0){
-            throw new IllegalArgumentException("Не верно указана аббревиатура валюты");
-        }
-        return id;
+//        long id = daoCurrency.getID(typeCurrency);
+//        if(id == 0){
+//            throw new IllegalArgumentException("Не верно указана аббревиатура валюты");
+//        }
+        return 0;
     }
 
     @Override
     public boolean exist(String type) {
-        return daoCurrency.exist(type);
+//        return daoCurrency.exist(type)
+        return true;
     }
 }
