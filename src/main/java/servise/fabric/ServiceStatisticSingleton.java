@@ -13,11 +13,11 @@ public class ServiceStatisticSingleton {
         if(instance==null){
             synchronized (ServiceStatisticSingleton.class){
                 if(instance==null){
-                    instance = new ServiceStatistic(
-                            ServiceCurrencySingleton.getInstance(),
-                            ServiceSendSingleton.getInstance(),
-                            DaoStatisticSingleton.getInstance()
-                            );
+//                    instance = new ServiceStatistic(
+//                            ServiceCurrencySingleton.getInstance(),
+//                            ServiceSendSingleton.getInstance(),
+//                            DaoStatisticSingleton.getInstance()
+//                            );
                 }
             }
         }
