@@ -64,5 +64,6 @@ public class ServiceCurrency implements IServiceCurrency {
         else {
             throw new IllegalArgumentException("Такого типа не существует");
         }
+
     }
 }
