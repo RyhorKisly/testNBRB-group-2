@@ -1,6 +1,7 @@
 package controllerrs;
 
 import core.StatisticCurrency;
+import jakarta.servlet.annotation.WebServlet;
 import servise.api.IServiceSend;
 import servise.api.IServiceStatistic;
 import servise.fabric.ServiceSendSingleton;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-
+@WebServlet(urlPatterns = "/statistic")
 public class StatisticServlet extends HttpServlet {
     private final IServiceSend serviceSend;
     private final IServiceStatistic serviceStatistic;
