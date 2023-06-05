@@ -22,6 +22,6 @@ public class UpdateCurrencyServlet extends HttpServlet {
         serviceCurrency.updateCurrency();
 
         // Возвращаем успешный статус
-        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.getWriter().println("Currency update complete.");
     }
 }
