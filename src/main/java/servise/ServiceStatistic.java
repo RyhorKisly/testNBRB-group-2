@@ -76,9 +76,10 @@ public class ServiceStatistic implements IServiceStatistic {
                     list.addAll(temp);
                 }
             }
-            statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
             if(!statisticCurrencies.get(0).getDate().toLocalDate().isEqual(dayStart)){
-                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),dayStart,statisticCurrencies.get(0).getDate().toLocalDate().minusDays(1));
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
+                        dayStart,
+                        statisticCurrencies.get(0).getDate().toLocalDate().minusDays(1));
                 list.addAll(temp);
                 daoStatisticCurrency.saveStatisticCurrency(temp);
             }

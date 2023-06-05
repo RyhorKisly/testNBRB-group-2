@@ -62,6 +62,7 @@ public class ServiceCurrency implements IServiceCurrency {
             return daoCurrency.getCurrency(typeCurrency);
         }
         else {
+
             throw new IllegalArgumentException("Такого типа не существует");
         }
 
