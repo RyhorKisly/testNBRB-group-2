@@ -23,11 +23,11 @@ import java.util.List;
 
 public class ServiceSend implements IServiceSend {
     private final ObjectMapper objectMapper;
-    private final IServiceCurrency serviceCurrency;
+   // private final IServiceCurrency serviceCurrency;
 
-    public ServiceSend(IServiceCurrency serviceCurrency) {
+    public ServiceSend() {
         this.objectMapper = new ObjectMapper();
-        this.serviceCurrency = serviceCurrency;
+        //this.serviceCurrency = serviceCurrency;
     }
 
     @Override

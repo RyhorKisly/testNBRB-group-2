@@ -13,7 +13,7 @@ public class ServiceSendSingleton {
         if(instance==null){
             synchronized (ServiceSendSingleton.class){
                 if(instance==null){
-                    instance = new ServiceSend(ServiceCurrencySingleton.getInstance());
+                    instance = new ServiceSend();
 
                 }
             }

@@ -1,5 +1,6 @@
 package servise;
 
+import core.Currency;
 import core.StatisticCurrency;
 import dao.api.IDaoStatisticCurrency;
 import servise.api.IServiceCurrency;
@@ -9,7 +10,7 @@ import servise.api.IServiceStatistic;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,59 +27,96 @@ public class ServiceStatistic implements IServiceStatistic {
 
     @Override
     public List<StatisticCurrency> getCurrency(String typeCurrency, LocalDate dateStart, LocalDate dateEnd) {
-        if(!serviceCurrency.exist(typeCurrency))
-            throw new IllegalArgumentException("Данной валюты не существует");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if(LocalDate.parse("2023-31-05", formatter).isAfter(dateEnd)||
-                LocalDate.parse("2022-12-01", formatter).isBefore(dateStart)){
+        if(!LocalDate.parse("2023-05-31", formatter).isAfter(dateEnd)||
+                LocalDate.parse("2022-12-01", formatter).isAfter(dateStart)){
             throw new IllegalArgumentException("Время не пошпо по веренному диапазону");
         }
-        long id = serviceCurrency.getId(typeCurrency);
-        List<StatisticCurrency> currencies = daoStatisticCurrency.getCurrencyFrom(id,dateStart,dateEnd);
-        currencies.sort(Comparator.comparing(StatisticCurrency::getDate));
-        if(currencies==null){
-            currencies = serviceSend.sendGetDynamics(id,dateStart,dateEnd);
-            daoStatisticCurrency.saveStatisticCurrency(currencies);
-            return currencies;
-        } else {
-            if(!dateStart.isEqual(currencies.get(0).getDate().toLocalDate())){
-                List<StatisticCurrency> listAdd = serviceSend.sendGetDynamics(id,dateStart,currencies.get(0).getDate().toLocalDate().minusDays(1));
-                currencies.addAll(listAdd);
-                currencies.sort(Comparator.comparing(StatisticCurrency::getDate));
-                daoStatisticCurrency.saveStatisticCurrency(listAdd);
-            }
-            if(!dateEnd.isEqual(currencies.get(currencies.size()-1).getDate().toLocalDate())){
-                List<StatisticCurrency> listAdd = serviceSend.sendGetDynamics(id,currencies.get(currencies.size()+1).getDate().toLocalDate().plusDays(1),dateEnd);
-                currencies.addAll(listAdd);
-                currencies.sort(Comparator.comparing(StatisticCurrency::getDate));
-                daoStatisticCurrency.saveStatisticCurrency(listAdd);
-            }
+        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        if(currencies==null||currencies.size()==0) {
+            throw new IllegalArgumentException("Данной валюты не существует");
         }
-        return currencies;
+        List<StatisticCurrency> statistics = new ArrayList<>();
+        currencies.sort(Comparator.comparing(Currency::getDateStart));
+        boolean start = false;
+        for(Currency currency : currencies){
+            LocalDate localDateStartTemp;
+            LocalDate localDateEndTemp;
+            //if(currency.getDateEnd().toLocalDate().)
+            List<StatisticCurrency> currenciesTemp = new ArrayList<>();
+            if(currency.getDateStart().toLocalDate().isBefore(dateStart)||currency.getDateStart().toLocalDate().isEqual(dateStart)){
+                localDateStartTemp = dateStart;
+            } else {
+                localDateStartTemp = currency.getDateStart().toLocalDate();
+            }
+            if(currency.getDateEnd().toLocalDate().isBefore(dateEnd)||currency.getDateStart().toLocalDate().isEqual(dateEnd)){
+                localDateEndTemp = currency.getDateEnd().toLocalDate();
+            } else {
+                localDateEndTemp = dateEnd;
+            }
+//-----------------------1------|---------------2--------|-----------------currency1 +
+//------------------------------|---------------1----2---|-----------------currency2 1+
+//------------------------------|--------------------1---|-----------------currency3
+//------------------------------|1-----------------------|-----------------currency4 1+
+////----------------------------|------------------------|2----------------currency5
+//------------------------------|1-----------------------|2----------------need
+            currenciesTemp = daoStatisticCurrency.getCurrencyFrom(currency.getId(),localDateStartTemp,localDateEndTemp);
+            if(currenciesTemp.size()==0){
+                currenciesTemp = serviceSend.sendGetDynamics(currency.getId(),localDateStartTemp,localDateEndTemp);
+                if(currenciesTemp.size()==0)
+                    continue;
+                daoStatisticCurrency.saveStatisticCurrency(currenciesTemp);
+            }
+            currenciesTemp.sort(Comparator.comparing(StatisticCurrency::getDate));
+            if(currenciesTemp.get(0).getDate().toLocalDate().isAfter(localDateStartTemp)){
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
+                        localDateStartTemp,currenciesTemp.get(0).getDate().minusDays(1).toLocalDate());
+                daoStatisticCurrency.saveStatisticCurrency(temp);
+                currenciesTemp.addAll(temp);
+            }
+            currenciesTemp.sort(Comparator.comparing(StatisticCurrency::getDate));
+            if(currenciesTemp.get(currencies.size()-1).getDate().toLocalDate().isBefore(localDateEndTemp)){
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
+                        currenciesTemp.get(currencies.size()-1).getDate().plusDays(1).toLocalDate(),localDateEndTemp);
+                daoStatisticCurrency.saveStatisticCurrency(temp);
+                currenciesTemp.addAll(temp);
+            }
+            for(StatisticCurrency statisticCurrency : currenciesTemp){
+                statistics.add(statisticCurrency);
+            }
+
+        }
+        return statistics;
     }
+
 
     @Override
     public List<StatisticCurrency> getCurrency(String typeCurrency) {
-        if(!serviceCurrency.exist(typeCurrency)){
-            throw new IllegalArgumentException("Данной валюты не существует");
-        }
-        long id = serviceCurrency.getId(typeCurrency);
-        return daoStatisticCurrency.getCurrency(id);
+       List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
+       List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+       if(currencies==null||currencies.size()==0){
+           throw new IllegalArgumentException("Такой валюты не существует");
+       }
+       for(Currency currency : currencies){
+           statisticCurrencies.addAll(daoStatisticCurrency.getCurrency(currency.getId()));
+       }
+       return statisticCurrencies;
     }
 
     @Override
     public double getAvgCurrency(String typeCurrency, int monthMM) {
-        if(!serviceCurrency.exist(typeCurrency))
-            throw new IllegalArgumentException("Данной валюты не существует");
-        if(monthMM>12||monthMM<1)
-            throw new IllegalArgumentException("Данного месяца не существует");
-        long id = serviceCurrency.getId(typeCurrency);
+        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        if(currencies==null||currencies.size()==0)
+            throw new IllegalArgumentException("Такой валюты не существует");
+        List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
+        for(Currency currency : currencies){
+            statisticCurrencies.addAll(daoStatisticCurrency.getCurrencyFromMonthWithoutWeekend(currency.getId(),monthMM));
+        }
         double avg = 0;
-        List<StatisticCurrency> currencies = daoStatisticCurrency.getCurrencyFromMonthWithoutWeekend(id,monthMM);
-        for(StatisticCurrency statisticCurrency : currencies){
+        for(StatisticCurrency statisticCurrency : statisticCurrencies){
             avg = avg+statisticCurrency.getOfficialRate();
         }
-        avg = avg/currencies.size();
+        avg = avg/statisticCurrencies.size();
         return avg;
     }
 }
