@@ -43,15 +43,15 @@ public class CurrencyServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Error: " + e.getMessage());
 
-        // Получаем информацию о валюте
-        Currency currency = (Currency) serviceCurrency.getCurrency(type);
-        if (currency == null) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
-            return;
+            // Получаем информацию о валюте
+            Currency currency = (Currency) serviceCurrency.getCurrency(type);
+            if (currency == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
+                return;
 
+            }
         }
     }
-
     private String convertToJson(List<Currency> currencies) {
         // Используем ObjectMapper для преобразования списка валют в JSON
         ObjectMapper objectMapper = new ObjectMapper();
