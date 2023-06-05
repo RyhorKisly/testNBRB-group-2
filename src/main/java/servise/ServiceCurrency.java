@@ -41,8 +41,8 @@ public class ServiceCurrency implements IServiceCurrency {
                             daoCurrency.remove(currencyFromDataBase.getId());
                             currenciesToAdd.add(newCurrency);
                         }
+                        break;
                     }
-                    break;
                 }
                 if (needToAdd){
                     currenciesToAdd.add(newCurrency);
@@ -62,7 +62,6 @@ public class ServiceCurrency implements IServiceCurrency {
             return daoCurrency.getCurrency(typeCurrency);
         }
         else {
-
             throw new IllegalArgumentException("Такого типа не существует");
         }
 
