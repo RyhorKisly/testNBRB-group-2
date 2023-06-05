@@ -1,6 +1,5 @@
 package dao.fabric;
 
-import dao.DaoStat;
 import dao.DaoStatisticCurrency;
 import dao.api.IDaoStatisticCurrency;
 import dao.ds.fabric.DataSourceSingleton;
@@ -18,7 +17,7 @@ public class DaoStatisticSingleton {
             synchronized (DaoStatisticSingleton.class){
                 if(instance==null){
                     try {
-                        instance = new DaoStat(DataSourceSingleton.getInstance());
+                        instance = new DaoStatisticCurrency(DataSourceSingleton.getInstance());
                     } catch (PropertyVetoException e) {
                         throw new RuntimeException(e);
                     }

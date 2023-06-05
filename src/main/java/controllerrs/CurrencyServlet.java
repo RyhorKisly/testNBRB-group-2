@@ -27,7 +27,7 @@ public class CurrencyServlet extends HttpServlet {
         }
 
         // Получаем информацию о валюте
-        Currency currency = serviceCurrency.getCurrency(type);
+        Currency currency = (Currency) serviceCurrency.getCurrency(type);
         if (currency == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
             return;
