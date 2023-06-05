@@ -7,6 +7,7 @@ import servise.api.IServiceCurrency;
 import servise.api.IServiceSend;
 import servise.api.IServiceStatistic;
 
+import javax.sql.XAConnection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,62 +34,69 @@ public class ServiceStatistic implements IServiceStatistic {
             throw new IllegalArgumentException("Время не пошпо по веренному диапазону");
         }
         List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
         if(currencies==null||currencies.size()==0) {
             throw new IllegalArgumentException("Данной валюты не существует");
         }
-        List<StatisticCurrency> statistics = new ArrayList<>();
-        currencies.sort(Comparator.comparing(Currency::getDateStart));
-        boolean start = false;
+        LocalDate start = dateStart;
+        LocalDate end = dateEnd;
         for(Currency currency : currencies){
-            LocalDate localDateStartTemp;
-            LocalDate localDateEndTemp;
-            //if(currency.getDateEnd().toLocalDate().)
-            List<StatisticCurrency> currenciesTemp = new ArrayList<>();
-            if(currency.getDateStart().toLocalDate().isBefore(dateStart)||currency.getDateStart().toLocalDate().isEqual(dateStart)){
-                localDateStartTemp = dateStart;
+            if(currency.getDateEnd().toLocalDate().isBefore(dateStart)||
+                    currency.getDateStart().toLocalDate().isAfter(dateEnd)){
+                continue;
+            }
+            if(currency.getDateStart().toLocalDate().isAfter(dateStart)||currency.getDateStart().toLocalDate().isEqual(dateStart)){
+                start = currency.getDateStart().toLocalDate();
+            } else
+            {
+                start = dateStart;
+            }
+            if(currency.getDateEnd().toLocalDate().isBefore(dateEnd)||currency.getDateEnd().toLocalDate().isEqual(dateEnd)){
+                end = currency.getDateEnd().toLocalDate();
             } else {
-                localDateStartTemp = currency.getDateStart().toLocalDate();
+                end = dateEnd;
             }
-            if(currency.getDateEnd().toLocalDate().isBefore(dateEnd)||currency.getDateStart().toLocalDate().isEqual(dateEnd)){
-                localDateEndTemp = currency.getDateEnd().toLocalDate();
-            } else {
-                localDateEndTemp = dateEnd;
-            }
-//-----------------------1------|---------------2--------|-----------------currency1 +
-//------------------------------|---------------1----2---|-----------------currency2 1+
-//------------------------------|--------------------1---|-----------------currency3
-//------------------------------|1-----------------------|-----------------currency4 1+
-////----------------------------|------------------------|2----------------currency5
-//------------------------------|1-----------------------|2----------------need
-            currenciesTemp = daoStatisticCurrency.getCurrencyFrom(currency.getId(),localDateStartTemp,localDateEndTemp);
-            if(currenciesTemp.size()==0){
-                currenciesTemp = serviceSend.sendGetDynamics(currency.getId(),localDateStartTemp,localDateEndTemp);
-                if(currenciesTemp.size()==0)
-                    continue;
-                daoStatisticCurrency.saveStatisticCurrency(currenciesTemp);
-            }
-            currenciesTemp.sort(Comparator.comparing(StatisticCurrency::getDate));
-            if(currenciesTemp.get(0).getDate().toLocalDate().isAfter(localDateStartTemp)){
-                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
-                        localDateStartTemp,currenciesTemp.get(0).getDate().minusDays(1).toLocalDate());
-                daoStatisticCurrency.saveStatisticCurrency(temp);
-                currenciesTemp.addAll(temp);
-            }
-            currenciesTemp.sort(Comparator.comparing(StatisticCurrency::getDate));
-            if(currenciesTemp.get(currencies.size()-1).getDate().toLocalDate().isBefore(localDateEndTemp)){
-                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
-                        currenciesTemp.get(currencies.size()-1).getDate().plusDays(1).toLocalDate(),localDateEndTemp);
-                daoStatisticCurrency.saveStatisticCurrency(temp);
-                currenciesTemp.addAll(temp);
-            }
-            for(StatisticCurrency statisticCurrency : currenciesTemp){
-                statistics.add(statisticCurrency);
-            }
-
+            statisticCurrencies.addAll(getAllCurrency(currency,start,end));
         }
-        return statistics;
+        return statisticCurrencies;
     }
 
+    private List<StatisticCurrency> getAllCurrency(Currency currency, LocalDate dayStart, LocalDate dayEnd){
+        List<StatisticCurrency> statisticCurrencies = daoStatisticCurrency.getCurrencyFrom(currency.getId(),dayStart,dayEnd);
+        if((statisticCurrencies.size()!=0)){
+            List<StatisticCurrency> list = new ArrayList<>();
+            statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
+            for(int i = 1;i<statisticCurrencies.size()-1;i++){
+                List<StatisticCurrency> temp = new ArrayList<>();
+                if (!statisticCurrencies.get(i).getDate().minusDays(1).isEqual(statisticCurrencies.get(i-1).getDate())){
+                    temp = serviceSend.sendGetDynamics(currency.getId(),
+                            statisticCurrencies.get(i-1).getDate().plusDays(1).toLocalDate(),
+                            statisticCurrencies.get(i).getDate().minusDays(1).toLocalDate());
+                    daoStatisticCurrency.saveStatisticCurrency(temp);
+                    list.addAll(temp);
+                }
+            }
+            statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
+            if(!statisticCurrencies.get(0).getDate().toLocalDate().isEqual(dayStart)){
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),dayStart,statisticCurrencies.get(0).getDate().toLocalDate().minusDays(1));
+                list.addAll(temp);
+                daoStatisticCurrency.saveStatisticCurrency(temp);
+            }
+            if(!statisticCurrencies.get(statisticCurrencies.size()-1).getDate().toLocalDate().isEqual(dayEnd)){
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
+                        statisticCurrencies.get(statisticCurrencies.size()-1).getDate().toLocalDate().plusDays(1),
+                        dayEnd);
+                list.addAll(temp);
+                daoStatisticCurrency.saveStatisticCurrency(temp);
+            }
+            statisticCurrencies.addAll(list);
+        } else {
+            statisticCurrencies = serviceSend.sendGetDynamics(currency.getId(),dayStart,dayEnd);
+            daoStatisticCurrency.saveStatisticCurrency(statisticCurrencies);
+        }
+        statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
+        return statisticCurrencies;
+    }
 
     @Override
     public List<StatisticCurrency> getCurrency(String typeCurrency) {

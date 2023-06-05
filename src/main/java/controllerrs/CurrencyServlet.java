@@ -3,6 +3,8 @@ package controllerrs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import core.Currency;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import servise.fabric.ServiceCurrencySingleton;
 import java.io.IOException;
 import java.util.List;
 
+@WebServlet(urlPatterns = "/currency")
 public class CurrencyServlet extends HttpServlet {
     private final IServiceCurrency serviceCurrency;
 
@@ -28,6 +31,7 @@ public class CurrencyServlet extends HttpServlet {
             // Получаем список валют по заданному типу
             List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
 
+
             // Преобразуем список валют в формат JSON
             String json = convertToJson(currencies);
 
@@ -38,6 +42,13 @@ public class CurrencyServlet extends HttpServlet {
             // Если возникла ошибка, возвращаем сообщение об ошибке
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Error: " + e.getMessage());
+
+        // Получаем информацию о валюте
+        Currency currency = (Currency) serviceCurrency.getCurrency(type);
+        if (currency == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
+            return;
+
         }
     }
 
