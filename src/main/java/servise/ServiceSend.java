@@ -54,7 +54,6 @@ public class ServiceSend implements IServiceSend {
 
     @Override
     public List<Currency> getCurrency() {
-        //TODO MyClass[] myObjects = mapper.readValue(json, MyClass[].class);
         List<Currency> result = new ArrayList<>();
 
         try {
