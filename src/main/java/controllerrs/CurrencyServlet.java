@@ -29,7 +29,7 @@ public class CurrencyServlet extends HttpServlet {
 
         try {
             // Получаем список валют по заданному типу
-            List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+            List<Currency> currencies = serviceCurrency.getCurrency();
 
 
             // Преобразуем список валют в формат JSON
@@ -45,7 +45,7 @@ public class CurrencyServlet extends HttpServlet {
 
             // Получаем информацию о валюте
             String type = "USD";
-            Currency currency = (Currency) serviceCurrency.getCurrency(type);
+            Currency currency = (Currency) serviceCurrency.getCurrency();
             if (currency == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
                 return;

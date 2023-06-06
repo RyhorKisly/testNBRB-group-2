@@ -33,7 +33,7 @@ public class ServiceStatistic implements IServiceStatistic {
                 LocalDate.parse("2022-12-01", formatter).isAfter(dateStart)){
             throw new IllegalArgumentException("Время не пошпо по веренному диапазону");
         }
-        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        List<Currency> currencies = serviceCurrency.getCurrency();
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
         if(currencies==null||currencies.size()==0) {
             throw new IllegalArgumentException("Данной валюты не существует");
@@ -100,9 +100,9 @@ public class ServiceStatistic implements IServiceStatistic {
     }
 
     @Override
-    public List<StatisticCurrency> getCurrency(String typeCurrency) {
+    public List<StatisticCurrency> getCurrency() {
        List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
-       List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+       List<Currency> currencies = serviceCurrency.getCurrency();
        if(currencies==null||currencies.size()==0){
            throw new IllegalArgumentException("Такой валюты не существует");
        }
@@ -114,7 +114,7 @@ public class ServiceStatistic implements IServiceStatistic {
 
     @Override
     public double getAvgCurrency(String typeCurrency, int monthMM) {
-        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        List<Currency> currencies = serviceCurrency.getCurrency();
         if(currencies==null||currencies.size()==0)
             throw new IllegalArgumentException("Такой валюты не существует");
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();

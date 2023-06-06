@@ -92,11 +92,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/webapp/</directory>
-                        </resource>
-                    </webResources>
                     <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
                 </configuration>
             </plugin>

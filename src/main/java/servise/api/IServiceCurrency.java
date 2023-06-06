@@ -9,6 +9,5 @@ public interface IServiceCurrency {
 
     void save(List<Currency> currencies);
 
-    List<Currency> getCurrency(String typeCurrency);
-
+    List<Currency> getCurrency();
 }

@@ -64,9 +64,11 @@ public class DaoCurrency implements IDaoCurrency {
     @Override
     public List<Currency> getCurrency() {
         List<Currency> currencies= new ArrayList<>();
+
         try (Connection conn = iDataSourceWrapper.getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(GET_CURRENCIES)) {
+
                 while (rs.next()) {
                     Currency currency = new Currency();
                     currency.setId(rs.getLong("id"));
@@ -87,11 +89,11 @@ public class DaoCurrency implements IDaoCurrency {
                     currency.setDateStart(rs.getDate("date_start").toLocalDate().atStartOfDay());
                     currency.setDateEnd(rs.getDate("date_end").toLocalDate().atStartOfDay());
                     currencies.add(currency);
-
                 }
             } catch (SQLException e) {
             throw new RuntimeException("Ошибка подключения к базе данных", e);
         }
+
         return currencies;
     }
 

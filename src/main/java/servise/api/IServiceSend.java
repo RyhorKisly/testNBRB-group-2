@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface IServiceSend {
     List<StatisticCurrency> sendGetDynamics(long idCurrency, LocalDate dateStart, LocalDate dateEnd);
+
     List<Currency> getCurrency();
-   // List<Currency> getCurrency(String type);
 }
