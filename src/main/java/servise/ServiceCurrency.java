@@ -22,6 +22,7 @@ public class ServiceCurrency implements IServiceCurrency {
     @Override
     public void updateCurrency() {
         List<Currency> currencyList = serviceSend.getCurrency();
+
         save(currencyList);
     }
 
@@ -41,8 +42,8 @@ public class ServiceCurrency implements IServiceCurrency {
                             daoCurrency.remove(currencyFromDataBase.getId());
                             currenciesToAdd.add(newCurrency);
                         }
+                        break;
                     }
-                    break;
                 }
                 if (needToAdd){
                     currenciesToAdd.add(newCurrency);
@@ -53,17 +54,16 @@ public class ServiceCurrency implements IServiceCurrency {
     }
 
     @Override
-    public List<Currency> getCurrency(String typeCurrency) {
+    public List<Currency> getCurrency() {
         if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
-            return daoCurrency.getCurrency(typeCurrency);
+            return daoCurrency.getCurrency();
         }
         updateCurrency();
         if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
-            return daoCurrency.getCurrency(typeCurrency);
+            return daoCurrency.getCurrency();
         }
         else {
             throw new IllegalArgumentException("Такого типа не существует");
         }
-
     }
 }

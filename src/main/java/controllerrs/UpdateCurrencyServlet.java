@@ -20,10 +20,8 @@ public class UpdateCurrencyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Вызываем метод для обновления данных о валютах
         serviceCurrency.updateCurrency();
 
-        // Возвращаем успешный статус
         resp.getWriter().println("Currency update complete.");
     }
 }

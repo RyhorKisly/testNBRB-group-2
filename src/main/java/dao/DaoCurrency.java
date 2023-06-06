@@ -64,34 +64,36 @@ public class DaoCurrency implements IDaoCurrency {
     @Override
     public List<Currency> getCurrency() {
         List<Currency> currencies= new ArrayList<>();
+
         try (Connection conn = iDataSourceWrapper.getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(GET_CURRENCIES)) {
-                while (rs.next()) {
-                    Currency currency = new Currency();
-                    currency.setId(rs.getLong("id"));
-                    currency.setParentId(rs.getLong("parent_id"));;
-                    currency.setCode(rs.getLong("code"));
-                    currency.setAbbreviation(rs.getString("abbreviation"));
-                    currency.setName(rs.getString("name"));
-                    currency.setNameBel(rs.getString("name_bel"));
-                    currency.setNameEng(rs.getString("name_eng"));
-                    currency.setQuotName(rs.getString("quot_name"));
-                    currency.setQuotNameBel(rs.getString("quot_name_bel"));
-                    currency.setQuotNameEng(rs.getString("quot_name_eng"));
-                    currency.setNameMulti(rs.getString("name_multi"));
-                    currency.setNameBelMulti(rs.getString("name_bel_multi"));
-                    currency.setNameEngMulti(rs.getString("name_eng_multi"));
-                    currency.setScale(rs.getLong("scale"));
-                    currency.setPeriodicity(rs.getLong("periodicity"));
-                    currency.setDateStart(rs.getDate("date_start").toLocalDate().atStartOfDay());
-                    currency.setDateEnd(rs.getDate("date_end").toLocalDate().atStartOfDay());
-                    currencies.add(currency);
 
-                }
-            } catch (SQLException e) {
+            while (rs.next()) {
+                Currency currency = new Currency();
+                currency.setId(rs.getLong("id"));
+                currency.setParentId(rs.getLong("parent_id"));;
+                currency.setCode(rs.getLong("code"));
+                currency.setAbbreviation(rs.getString("abbreviation"));
+                currency.setName(rs.getString("name"));
+                currency.setNameBel(rs.getString("name_bel"));
+                currency.setNameEng(rs.getString("name_eng"));
+                currency.setQuotName(rs.getString("quot_name"));
+                currency.setQuotNameBel(rs.getString("quot_name_bel"));
+                currency.setQuotNameEng(rs.getString("quot_name_eng"));
+                currency.setNameMulti(rs.getString("name_multi"));
+                currency.setNameBelMulti(rs.getString("name_bel_multi"));
+                currency.setNameEngMulti(rs.getString("name_eng_multi"));
+                currency.setScale(rs.getLong("scale"));
+                currency.setPeriodicity(rs.getLong("periodicity"));
+                currency.setDateStart(rs.getDate("date_start").toLocalDate().atStartOfDay());
+                currency.setDateEnd(rs.getDate("date_end").toLocalDate().atStartOfDay());
+                currencies.add(currency);
+            }
+        } catch (SQLException e) {
             throw new RuntimeException("Ошибка подключения к базе данных", e);
         }
+
         return currencies;
     }
 

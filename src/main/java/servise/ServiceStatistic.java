@@ -33,7 +33,7 @@ public class ServiceStatistic implements IServiceStatistic {
                 LocalDate.parse("2022-12-01", formatter).isAfter(dateStart)){
             throw new IllegalArgumentException("Время не пошпо по веренному диапазону");
         }
-        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        List<Currency> currencies = serviceCurrency.getCurrency();
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
         if(currencies==null||currencies.size()==0) {
             throw new IllegalArgumentException("Данной валюты не существует");
@@ -76,9 +76,10 @@ public class ServiceStatistic implements IServiceStatistic {
                     list.addAll(temp);
                 }
             }
-            statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
             if(!statisticCurrencies.get(0).getDate().toLocalDate().isEqual(dayStart)){
-                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),dayStart,statisticCurrencies.get(0).getDate().toLocalDate().minusDays(1));
+                List<StatisticCurrency> temp = serviceSend.sendGetDynamics(currency.getId(),
+                        dayStart,
+                        statisticCurrencies.get(0).getDate().toLocalDate().minusDays(1));
                 list.addAll(temp);
                 daoStatisticCurrency.saveStatisticCurrency(temp);
             }
@@ -99,21 +100,21 @@ public class ServiceStatistic implements IServiceStatistic {
     }
 
     @Override
-    public List<StatisticCurrency> getCurrency(String typeCurrency) {
-       List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
-       List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
-       if(currencies==null||currencies.size()==0){
-           throw new IllegalArgumentException("Такой валюты не существует");
-       }
-       for(Currency currency : currencies){
-           statisticCurrencies.addAll(daoStatisticCurrency.getCurrency(currency.getId()));
-       }
-       return statisticCurrencies;
+    public List<StatisticCurrency> getCurrency() {
+        List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
+        List<Currency> currencies = serviceCurrency.getCurrency();
+        if(currencies==null||currencies.size()==0){
+            throw new IllegalArgumentException("Такой валюты не существует");
+        }
+        for(Currency currency : currencies){
+            statisticCurrencies.addAll(daoStatisticCurrency.getCurrency(currency.getId()));
+        }
+        return statisticCurrencies;
     }
 
     @Override
     public double getAvgCurrency(String typeCurrency, int monthMM) {
-        List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
+        List<Currency> currencies = serviceCurrency.getCurrency();
         if(currencies==null||currencies.size()==0)
             throw new IllegalArgumentException("Такой валюты не существует");
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();

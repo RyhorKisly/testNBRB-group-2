@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface IServiceStatistic {
     List<StatisticCurrency> getCurrency(String typeCurrency, LocalDate dateStart, LocalDate dateEnd);
-    List<StatisticCurrency> getCurrency(String typeCurrency);
+
+    List<StatisticCurrency> getCurrency();
+
     double getAvgCurrency(String typeCurrency, int monthMM);
 }
