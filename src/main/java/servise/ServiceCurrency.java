@@ -22,6 +22,7 @@ public class ServiceCurrency implements IServiceCurrency {
     @Override
     public void updateCurrency() {
         List<Currency> currencyList = serviceSend.getCurrency();
+
         save(currencyList);
     }
 

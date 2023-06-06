@@ -44,6 +44,7 @@ public class CurrencyServlet extends HttpServlet {
             response.getWriter().println("Error: " + e.getMessage());
 
             // Получаем информацию о валюте
+            String type = "USD";
             Currency currency = (Currency) serviceCurrency.getCurrency(type);
             if (currency == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
