@@ -8,14 +8,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DataSourceC3P0 implements IDataSourceWrapper {
-    private ComboPooledDataSource ds;
+    private final ComboPooledDataSource ds;
 
     public DataSourceC3P0() throws PropertyVetoException {
         this.ds = new ComboPooledDataSource();
         this.ds.setDriverClass("org.postgresql.Driver");
         this.ds.setJdbcUrl("jdbc:postgresql://localhost:5432/curr");
-        this.ds.setUser("postgres");
-        this.ds.setPassword("postgres");
+        this.ds.setUser("task-manager");
+        this.ds.setPassword("task-manager2023");
     }
 
     @Override
