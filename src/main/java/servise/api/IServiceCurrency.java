@@ -10,4 +10,6 @@ public interface IServiceCurrency {
     void save(List<Currency> currencies);
 
     List<Currency> getCurrency();
+
+    List<Currency> getCurrencyByType(String type);
 }

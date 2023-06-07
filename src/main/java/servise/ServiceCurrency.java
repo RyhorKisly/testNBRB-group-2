@@ -4,11 +4,10 @@ import core.Currency;
 import dao.api.IDaoCurrency;
 import servise.api.IServiceCurrency;
 import servise.api.IServiceSend;
-import servise.fabric.ServiceSendSingleton;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PrimitiveIterator;
+import java.util.stream.Collectors;
 
 public class ServiceCurrency implements IServiceCurrency {
     private final IDaoCurrency daoCurrency;
@@ -65,5 +64,17 @@ public class ServiceCurrency implements IServiceCurrency {
         else {
             throw new IllegalArgumentException("Такого типа не существует");
         }
+    }
+
+    @Override
+    public List<Currency> getCurrencyByType(String type) {
+        List<Currency> currencies = daoCurrency.getCurrency();
+        if (currencies == null || currencies.size() == 0){
+            throw new IllegalArgumentException("No currency data available.");
+        }
+
+        return currencies.stream()
+                .filter(currency -> currency.getAbbreviation().equalsIgnoreCase(type))
+                .collect(Collectors.toList());
     }
 }
