@@ -3,18 +3,17 @@ package controllerrs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import core.Currency;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import servise.api.IServiceCurrency;
 import servise.fabric.ServiceCurrencySingleton;
 
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/currency")
+@WebServlet(name = "CurrencyServlet", urlPatterns = "/currency")
 public class CurrencyServlet extends HttpServlet {
     private final IServiceCurrency serviceCurrency;
 
@@ -24,7 +23,7 @@ public class CurrencyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String typeCurrency = request.getParameter("type");
 
         try {
@@ -44,7 +43,7 @@ public class CurrencyServlet extends HttpServlet {
             response.getWriter().println("Error: " + e.getMessage());
 
             // Получаем информацию о валюте
-            Currency currency = (Currency) serviceCurrency.getCurrency(type);
+            Currency currency = (Currency) serviceCurrency.getCurrency(typeCurrency);
             if (currency == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
                 return;

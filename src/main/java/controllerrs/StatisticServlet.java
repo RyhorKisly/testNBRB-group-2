@@ -4,20 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import core.StatisticCurrency;
 
-import jakarta.servlet.annotation.WebServlet;
-import servise.api.IServiceSend;
 
 import servise.api.IServiceStatistic;
 import servise.fabric.ServiceStatisticSingleton;
 
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-@WebServlet(urlPatterns = "/statistic")
+@WebServlet(name = "StatisticServlet", urlPatterns = "/statistic")
 public class StatisticServlet extends HttpServlet {
     private IServiceStatistic serviceStatistic;
 
@@ -26,7 +25,7 @@ public class StatisticServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String typeCurrency = request.getParameter("type");
         String startDateString = request.getParameter("start_date");
         String endDateString = request.getParameter("end_date");

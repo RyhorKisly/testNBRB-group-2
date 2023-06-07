@@ -20,9 +20,10 @@ public class ServiceCurrency implements IServiceCurrency {
     }
 
     @Override
-    public void updateCurrency() {
+    public List<Currency> updateCurrency() {
         List<Currency> currencyList = serviceSend.getCurrency();
         save(currencyList);
+        return currencyList;
     }
 
     @Override
@@ -54,12 +55,13 @@ public class ServiceCurrency implements IServiceCurrency {
 
     @Override
     public List<Currency> getCurrency(String typeCurrency) {
-        if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
-            return daoCurrency.getCurrency(typeCurrency);
+        List<Currency> currency = daoCurrency.getCurrency();
+        if (currency != null || currency.size() != 0){
+            return currency;
         }
-        updateCurrency();
-        if (daoCurrency.getCurrency() != null || daoCurrency.getCurrency().size() != 0){
-            return daoCurrency.getCurrency(typeCurrency);
+        currency = updateCurrency();
+        if (currency != null || currency.size() != 0){
+            return currency;
         }
         else {
             throw new IllegalArgumentException("Такого типа не существует");
