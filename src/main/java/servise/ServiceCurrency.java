@@ -2,6 +2,7 @@ package servise;
 
 import core.Currency;
 import dao.api.IDaoCurrency;
+import jakarta.servlet.http.HttpServletResponse;
 import servise.api.IServiceCurrency;
 import servise.api.IServiceSend;
 import servise.fabric.ServiceSendSingleton;
@@ -55,17 +56,26 @@ public class ServiceCurrency implements IServiceCurrency {
 
     @Override
     public List<Currency> getCurrency(String typeCurrency) {
-        List<Currency> currency = daoCurrency.getCurrency();
-        if (currency != null || currency.size() != 0){
-            return currency;
+        List<Currency> currency = daoCurrency.getCurrency(typeCurrency);
+        if(currency == null || currency.size() == 0) {
+            throw new IllegalArgumentException("Данной валюты не существуетт");
         }
-        currency = updateCurrency();
-        if (currency != null || currency.size() != 0){
-            return currency;
-        }
-        else {
-            throw new IllegalArgumentException("Такого типа не существует");
-        }
+        return daoCurrency.getCurrency(typeCurrency);
+    }
 
+    @Override
+    public List<Currency> getCurrency() {
+        List<Currency> currency = daoCurrency.getCurrency();
+        if (currency == null || currency.size() == 0){
+            currency = updateCurrency();
+            if (currency == null || currency.size() == 0){
+                throw new IllegalArgumentException("В базе нет валют и не получилось достать из apiNBRB");
+            }
+            else {
+                return currency;
+            }
+        } else {
+            return currency;
+        }
     }
 }
