@@ -127,7 +127,7 @@ public class DaoStatisticCurrency implements IDaoStatisticCurrency {
                 String abbreviation = rs.getString("abbreviation");
                 long scale = rs.getLong("scale");
                 String name = rs.getString("name");
-                long officialRate = rs.getLong("official_rate");
+                double officialRate = rs.getDouble("official_rate");
                 statisticCurrencies.add(new StatisticCurrency(
                         id,date, abbreviation,scale,name, officialRate));
             }
