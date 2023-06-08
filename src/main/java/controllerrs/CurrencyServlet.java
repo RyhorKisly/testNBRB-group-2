@@ -2,14 +2,15 @@ package controllerrs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import core.Currency;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import servise.api.IServiceCurrency;
 import servise.fabric.ServiceCurrencySingleton;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,8 +29,7 @@ public class CurrencyServlet extends HttpServlet {
 
         try {
             // Получаем список валют по заданному типу
-            List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
-
+            List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency.toUpperCase());
 
             // Преобразуем список валют в формат JSON
             String json = convertToJson(currencies);
@@ -37,23 +37,17 @@ public class CurrencyServlet extends HttpServlet {
             // Отправляем JSON-ответ клиенту
             response.setContentType("application/json");
             response.getWriter().println(json);
+
         } catch (IllegalArgumentException e) {
             // Если возникла ошибка, возвращаем сообщение об ошибке
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Error: " + e.getMessage());
-
-            // Получаем информацию о валюте
-            Currency currency = (Currency) serviceCurrency.getCurrency(typeCurrency);
-            if (currency == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта не найдена");
-                return;
-
-            }
         }
     }
     private String convertToJson(List<Currency> currencies) {
         // Используем ObjectMapper для преобразования списка валют в JSON
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         try {
             return objectMapper.writeValueAsString(currencies);
         } catch (JsonProcessingException e) {

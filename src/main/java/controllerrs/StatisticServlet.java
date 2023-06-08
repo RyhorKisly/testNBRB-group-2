@@ -2,17 +2,17 @@ package controllerrs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import core.StatisticCurrency;
 
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import servise.api.IServiceStatistic;
 import servise.fabric.ServiceStatisticSingleton;
 
-
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,7 +36,7 @@ public class StatisticServlet extends HttpServlet {
             LocalDate endDate = LocalDate.parse(endDateString);
 
             // Получаем статистику валюты по заданным параметрам
-            List<StatisticCurrency> statistics = serviceStatistic.getCurrency(typeCurrency, startDate, endDate);
+            List<StatisticCurrency> statistics = serviceStatistic.getCurrency(typeCurrency.toUpperCase(), startDate, endDate);
 
             // Преобразуем статистику в формат JSON
             String json = convertToJson(statistics);
@@ -54,6 +54,7 @@ public class StatisticServlet extends HttpServlet {
     private String convertToJson(List<StatisticCurrency> statistics) {
         // Используем ObjectMapper для преобразования списка статистики в JSON
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         try {
             return objectMapper.writeValueAsString(statistics);
         } catch (JsonProcessingException e) {
