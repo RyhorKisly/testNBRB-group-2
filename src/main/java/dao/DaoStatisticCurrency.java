@@ -16,12 +16,8 @@ import java.util.List;
 public class DaoStatisticCurrency implements IDaoStatisticCurrency {
     IDataSourceWrapper dataSourceWrapper;
     private final static String SAVE_STATISTIC_CURRENCY = "INSERT INTO curr.statistic(" +
-            "id, date_curr, abbreviation, scale, name, official_rate, weekend_id) \n" +
-            "VALUES (?, ?, ?, ?, ?, ?, (\n" +
-            "SELECT weekend_id \n" +
-            "FROM curr.weekends \n" +
-            "WHERE ? = calendar_date\n" +
-            "));";
+            "id, date_curr, abbreviation, scale, name, official_rate) \n" +
+            "VALUES (?, ?, ?, ?, ?, ?);";
     private final static String GET_CURRENCIES_BY_ID = "SELECT " +
             "id, date_curr, abbreviation, scale, name, official_rate \n" +
             "FROM curr.statistic \n" +
@@ -31,10 +27,14 @@ public class DaoStatisticCurrency implements IDaoStatisticCurrency {
             "FROM curr.statistic \n" +
             "WHERE date_curr >= ? AND date_curr <= ? AND id = ?;";
     private final static String GET_CURRENCIES_BY_MONTH_AND_ID_WITHOUT_WEEKENDS = "SELECT " +
-            "id, date_curr, abbreviation, scale, name, official_rate \n" +
-            "FROM curr.weekends \n" +
-            "         INNER JOIN curr.statistic USING(weekend_id) \n" +
-            "WHERE id = ? AND EXTRACT(MONTH FROM calendar_date) = ? AND is_day_off = '0';";
+            "id, date_curr, abbreviation, scale, name, official_rate " +
+            "FROM curr.statistic " +
+            "WHERE id = ? " +
+            "AND EXTRACT(MONTH FROM date_curr) = ? " +
+            "AND EXTRACT(YEAR FROM date_curr) = ? " +
+            "AND date_curr = (SELECT calendar_date " +
+            "FROM curr.weekends " +
+            "WHERE is_day_off = '0' AND calendar_date = date_curr);";
 
 
 
@@ -55,8 +55,6 @@ public class DaoStatisticCurrency implements IDaoStatisticCurrency {
                 preparedStatement.setLong(4,statisticCurrency.getScale());
                 preparedStatement.setString(5,statisticCurrency.getName());
                 preparedStatement.setDouble(6,statisticCurrency.getOfficialRate());
-                preparedStatement.setDate(7,
-                        java.sql.Date.valueOf(statisticCurrency.getDate().toLocalDate()));
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -115,12 +113,13 @@ public class DaoStatisticCurrency implements IDaoStatisticCurrency {
     }
 
     @Override
-    public List<StatisticCurrency> getCurrencyFromMonthWithoutWeekend(long curId, int month) {
+    public List<StatisticCurrency> getCurrencyFromMonthWithoutWeekend(long curId, int month, int year) {
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
         try (Connection conn = dataSourceWrapper.getConnection()){
             PreparedStatement ps = conn.prepareStatement(GET_CURRENCIES_BY_MONTH_AND_ID_WITHOUT_WEEKENDS);
             ps.setLong(1, curId);
             ps.setInt(2, month);
+            ps.setInt(3, year);
             ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 long id = rs.getLong("id");
