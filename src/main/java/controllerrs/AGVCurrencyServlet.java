@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "AGVCurrency", urlPatterns = "/avg")
-public class AGVCurrency extends HttpServlet {
+public class AGVCurrencyServlet extends HttpServlet {
     private final IServiceStatistic serviceStatistic;
 
-    public AGVCurrency() {
+    public AGVCurrencyServlet() {
         this.serviceStatistic = ServiceStatisticSingleton.getInstance();
     }
 
