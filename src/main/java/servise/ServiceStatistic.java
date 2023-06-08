@@ -30,14 +30,18 @@ public class ServiceStatistic implements IServiceStatistic {
     public List<StatisticCurrency> getCurrency(String typeCurrency, LocalDate dateStart, LocalDate dateEnd) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         if(!LocalDate.parse("2023-05-31", formatter).isAfter(dateEnd)||
-                LocalDate.parse("2022-12-01", formatter).isAfter(dateStart)){
+                LocalDate.parse("2022-12-01", formatter).isAfter(dateStart)||
+                dateStart.isAfter(dateEnd)){
             throw new IllegalArgumentException("Время не пошпо по веренному диапазону");
         }
         List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
-        if(currencies==null||currencies.size()==0) {
-            throw new IllegalArgumentException("Данной валюты не существует");
-        }
+
+        //TODO Уже есть проверка в serviceCurrency.getCurrency(typeCurrency);
+//        if(currencies==null||currencies.size()==0) {
+//            throw new IllegalArgumentException("Данной валюты не существует");
+//        }
+
         LocalDate start = dateStart;
         LocalDate end = dateEnd;
         for(Currency currency : currencies){
@@ -94,6 +98,10 @@ public class ServiceStatistic implements IServiceStatistic {
         } else {
             statisticCurrencies = serviceSend.sendGetDynamics(currency.getId(),dayStart,dayEnd);
             daoStatisticCurrency.saveStatisticCurrency(statisticCurrencies);
+
+            if(statisticCurrencies == null || statisticCurrencies.size() == 0) {
+                throw new IllegalArgumentException("В apiNBRB нет текущей валюты за данный период времени");
+            }
         }
         statisticCurrencies.sort(Comparator.comparing(StatisticCurrency::getDate));
         return statisticCurrencies;
@@ -113,13 +121,13 @@ public class ServiceStatistic implements IServiceStatistic {
     }
 
     @Override
-    public double getAvgCurrency(String typeCurrency, int monthMM) {
+    public double getAvgCurrency(String typeCurrency, int monthMM, int year) {
         List<Currency> currencies = serviceCurrency.getCurrency(typeCurrency);
         if(currencies==null||currencies.size()==0)
             throw new IllegalArgumentException("Такой валюты не существует");
         List<StatisticCurrency> statisticCurrencies = new ArrayList<>();
         for(Currency currency : currencies){
-            statisticCurrencies.addAll(daoStatisticCurrency.getCurrencyFromMonthWithoutWeekend(currency.getId(),monthMM));
+            statisticCurrencies.addAll(daoStatisticCurrency.getCurrencyFromMonthWithoutWeekend(currency.getId(),monthMM,year));
         }
         double avg = 0;
         for(StatisticCurrency statisticCurrency : statisticCurrencies){
