@@ -1,10 +1,6 @@
 -- Добавить валюту в таблицу
 INSERT INTO curr.statistic(id, date_curr, abbreviation, scale, name, official_rate, weekend_id)
-VALUES (?, ?, ?, ?, ?, ?, (
-    SELECT weekend_id
-    FROM curr.weekends
-    WHERE ? = calendar_date
-));
+VALUES (?, ?, ?, ?, ?, ?);
 
 -- getCurrency(long curId)
 SELECT id, date_curr, abbreviation, scale, name, official_rate
@@ -17,10 +13,15 @@ FROM curr.statistic
 WHERE date_curr >= ? AND date_curr <= ? AND id = ?;
 
 -- List<StatisticCurrency> getCurrencyFromMonthWithoutWeekend(long curId, int month)
-SELECT id, date_curr, abbreviation, scale, name, official_rate
+SELECT
+id, date_curr, abbreviation, scale, name, official_rate
+FROM curr.statistic
+WHERE id = ?
+AND EXTRACT(MONTH FROM date_curr) = ?
+AND EXTRACT(YEAR FROM date_curr) = ?
+AND date_curr = (SELECT calendar_date
 FROM curr.weekends
-         INNER JOIN curr.statistic USING(weekend_id)
-WHERE id = ? AND EXTRACT(MONTH FROM calendar_date) = ? AND is_day_off = '0';
+WHERE is_day_off = '0' AND calendar_date = date_curr);
 
 
 
